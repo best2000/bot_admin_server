@@ -71,11 +71,11 @@ async def get_trade_logs(id: str, limit: int = 100):
     #price = [i[1] for i in data]
     price_chg_pct = [i[2] for i in data]
     #nav = [i[3] for i in data]
-    nav_pct = [i[4] for i in data]
+    nav_chg_pct = [i[4] for i in data]
     base_ratio = [i[5] for i in data]
     fig, (ax1, ax2) = plt.subplots(2, sharex=True)
     ax1.plot(time, price_chg_pct, color="r", marker=".", label="price%")
-    ax1.plot(time, nav_pct, color="g", marker=".",label='nav%')
+    ax1.plot(time, nav_chg_pct, color="g", marker=".", label='nav%')
     #ax1.set_ylim(0, 500)
     ax1.legend()
     ax2.plot(time, base_ratio, marker=".", label='asset ratio%')
