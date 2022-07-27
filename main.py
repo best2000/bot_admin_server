@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import json
 import sqlite3
 
-# uvicorn main:app --reload
+# uvicorn main:app --host 0.0.0.0 --port 5055 --reload
 # api docs => http://127.0.0.1:8000/docs
 
 app = FastAPI()
