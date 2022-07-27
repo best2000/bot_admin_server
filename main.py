@@ -13,51 +13,44 @@ import sqlite3
 
 app = FastAPI()
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# app.mount("/static", StaticFiles(directory="static"), name="static")
 
-templates = Jinja2Templates(directory="templates")
+# templates = Jinja2Templates(directory="templates")
 
-data_path_config = "./public/data_path.json" 
 # @app.get("/dashboard/{id}")
 # async def dashboard(req: Request, id: str):
 #     return templates.TemplateResponse("template.html", {"request": req, "id": id})
 
 
-@app.post("/config/{id}")
-async def update_config(up_config: dict, id: str):
-    config = ConfigParser()
-    config.read("./stash/config.ini")
-    # check config key exist
-    # update config value
-    # config.set('SETTINGS', 'value', '15')
-    # with open('settings.ini', 'w') as configfile:
-    #     config.write(configfile)
-    return config._sections
+# @app.post("/config/{id}")
+# async def update_config(up_config: dict, id: str):
+#     config = ConfigParser()
+#     config.read("./stash/config.ini")
+#     # check config key exist
+#     # update config value
+#     # config.set('SETTINGS', 'value', '15')
+#     # with open('settings.ini', 'w') as configfile:
+#     #     config.write(configfile)
+#     return config._sections
 
 
 @app.get("/status/{id}")
-async def get_status(req: Request, id: str):
-    # read path config
-    with open(data_path_config) as file:
-        data_path = json.load(file)
+async def get_status(id: str):
     data = {}
     # instance
-    with open(data_path[id]['public']+"/logs/instance.json") as file:
+    with open("./public/{}/instance.json".format(id)) as file:
         data['instance'] = json.load(file)
     # config
     config = ConfigParser()
-    config.read(data_path[id]['public']+"/config.ini")
+    config.read("./public/{}/config.ini".format(id))
     data['config'] = config._sections
     return data
 
 
 @app.get("/trade-logs/{id}")
 async def get_trade_logs(id: str, limit: int = 100):
-    # read path config
-    with open(data_path_config) as file:
-        data_path = json.load(file)
     # get data from db
-    conn = sqlite3.connect(data_path[id]['public']+"/logs/log.db")
+    conn = sqlite3.connect("./public/{}/log.db".format(id))
     c = conn.cursor()
     c.execute(
         "SELECT * FROM trade_logs ORDER BY datetime DESC LIMIT {}".format(limit))
@@ -66,7 +59,7 @@ async def get_trade_logs(id: str, limit: int = 100):
     conn.commit()
     conn.close()
     # plot
-    file_path = "./public/trade_logs_{}.svg".format(id)
+    file_path = "./public/{}/trade_logs.svg".format(id)
     time = [i[0] for i in data]
     #price = [i[1] for i in data]
     price_chg_pct = [i[2] for i in data]
